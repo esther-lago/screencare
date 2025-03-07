@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Uso de Pantallas 📱📺💻</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-5">
+
+    <!-- Modal para pedir la edad -->
+    <div id="ageModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 class="text-xl font-semibold mb-4">¿Cuántos años tienes? 👶🧑👨‍🦳</h2>
+            <input type="number" id="ageInput" class="border border-gray-300 rounded p-2 text-center w-24" min="1">
+            <button onclick="saveAge()" class="bg-blue-500 text-white px-4 py-2 rounded mt-4 hover:bg-blue-600">
+                Confirmar
+            </button>
+        </div>
+    </div>
+
+    <!-- Título -->
+    <h1 class="text-3xl font-bold my-4">Control de Uso de Pantallas 📺</h1>
+
+    <!-- Tabla de control de pantalla -->
+    <div class="overflow-x-auto">
+        <table class="table-auto border-collapse border border-gray-400 text-center">
+            <thead>
+                <tr class="bg-blue-500 text-white">
+                    <th class="border border-gray-300 px-4 py-2">Horario 🕒</th>
+                    <th class="border border-gray-300 px-4 py-2">Lunes</th>
+                    <th class="border border-gray-300 px-4 py-2">Martes</th>
+                    <th class="border border-gray-300 px-4 py-2">Miércoles</th>
+                    <th class="border border-gray-300 px-4 py-2">Jueves</th>
+                    <th class="border border-gray-300 px-4 py-2">Viernes</th>
+                    <th class="border border-gray-300 px-4 py-2">Sábado</th>
+                    <th class="border border-gray-300 px-4 py-2">Domingo</th>
+                </tr>
+            </thead>
+            <tbody id="screenTableBody">
+                <script>
+                    const periods = ["Mañana 🌅", "Tarde 🌞", "Noche 🌙"];
+                    periods.forEach(period => {
+                        document.write(`<tr>
+                            <td class="border border-gray-300 px-4 py-2">${period}</td>`);
+                        for (let i = 0; i < 7; i++) {
+                            document.write(`
+                            <td class="border border-gray-300 p-2">
+                                <label>📺 TV: <input type="number" class="screen-time tv w-16 text-center" min="0"></label><br>
+                                <label>📱 Teléfono: <input type="number" class="screen-time telefono w-16 text-center" min="0"></label><br>
+                                <label>📲 Tablet: <input type="number" class="screen-time tablet w-16 text-center" min="0"></label><br>
+                                <label>💻 Ordenador (Ocio): <input type="number" class="screen-time ordenador-ocio w-16 text-center" min="0"></label><br>
+                                <label>💼 Ordenador (Trabajo): <input type="number" class="screen-time ordenador-trabajo w-16 text-center" min="0"></label>
+                            </td>`);
+                        }
+                        document.write(`</tr>`);
+                    });
+                </script>
+                <!-- Fila de resultados -->
+                <tr class="bg-gray-200 font-semibold">
+                    <td class="border border-gray-300 px-4 py-2">Resultado 📺</td>
+                    <td class="border border-gray-300 px-4 py-2 result" colspan="7">-</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Botones -->
+    <div class="mt-4">
+        <button onclick="generateSuggestion()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+            🚀 Mejora tus ratios
+        </button>
+        <button onclick="resetTable()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 ml-2">
+            🗑 Limpiar Tabla
+        </button>
+    </div>
+
+    <!-- Leyenda -->
+    <div class="mt-6 text-sm text-gray-600">
+        <p>📌 Recomendaciones de tiempo de pantalla:</p>
+        <p>👶 Menores de 2 años: 0 horas al día.</p>
+        <p>👧 2 a 4 años: Máximo 1 hora al día.</p>
+        <p>🧒 5 a 17 años: Máximo 2 horas al día.</p>
+        <p>🧑‍💻 Adultos: Máximo 3 horas al día (sin incluir trabajo).</p>
+    </div>
+
+    <script>
+        let age = 0;
+
+        function saveAge() {
+            const ageInput = document.getElementById("ageInput").value;
+            age = parseInt(ageInput);
+            if (!age || age < 1) {
+                alert("Introduce una edad válida.");
+                return;
+            }
+            document.getElementById("ageModal").style.display = "none";
+        }
+
+        function generateSuggestion() {
+            const suggestions = [
+                "📖 Lee un libro en lugar de mirar una pantalla.",
+                "🚶‍♂️ Sal a caminar 30 minutos.",
+                "🎨 Practica un hobby sin pantallas.",
+                "🎧 Escucha un podcast sin mirar la pantalla.",
+                "🛌 Desconéctate 1 hora antes de dormir."
+            ];
+            alert("Para eliminar tantas horas de pantalla en tu organismo, te recomendamos:\n\n" + 
+                suggestions[Math.floor(Math.random() * suggestions.length)]);
+        }
+
+        function resetTable() {
+            document.querySelectorAll(".screen-time").forEach(input => input.value = "");
+            document.querySelectorAll(".result").forEach(el => el.textContent = "-");
+        }
+
+        document.querySelectorAll(".screen-time").forEach(input => {
+            input.addEventListener("input", updateResults);
+        });
+
+        function updateResults() {
+            let dailyTotals = Array(7).fill(0);
+            document.querySelectorAll(".screen-time:not(.ordenador-trabajo)").forEach((input, i) => {
+                let colIndex = i % 7;
+                dailyTotals[colIndex] += parseFloat(input.value) || 0;
+            });
+
+            document.querySelectorAll(".result").forEach((cell, i) => {
+                let maxHours = (age < 2) ? 0 : (age < 5) ? 1 : (age < 17) ? 2 : 3;
+                if (dailyTotals[i] > maxHours) {
+                    cell.textContent = "❌ Te has pasado de horas.";
+                    cell.classList.add("text-red-600");
+                } else {
+                    cell.textContent = "✅ Objetivo cumplido.";
+                    cell.classList.remove("text-red-600");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
